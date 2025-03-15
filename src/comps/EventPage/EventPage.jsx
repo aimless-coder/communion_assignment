@@ -1,30 +1,49 @@
 import React, { useState, useEffect } from 'react'
 import EventCard from './EventCard'
-import eventsData from '../../../events.json'
+import { getAllEvents } from '../../events'
 import Header from '../Header/Header'
 import Footer from '../Footer/Footer'
 import CreateEvent from '../CreateEvent/CreateEvent'
 
 const EventPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('All')
-  const [filteredEvents, setFilteredEvents] = useState(eventsData)
+  const [filteredEvents, setFilteredEvents] = useState([])
+  const [allEvents, setAllEvents] = useState([])
 
-  const categories = ['All', ...new Set(eventsData.map(event => event.category))]
+  // Load initial events
+  useEffect(() => {
+    const events = getAllEvents()
+    setAllEvents(events)
+    setFilteredEvents(events)
+  }, [])
+
+  // Handle new event added
+  const handleEventAdded = (updatedEvents) => {
+    setAllEvents(updatedEvents)
+    if (selectedCategory === 'All') {
+      setFilteredEvents(updatedEvents)
+    } else {
+      setFilteredEvents(updatedEvents.filter(event => event.category === selectedCategory))
+    }
+  }
+
+  // Get unique categories from events
+  const categories = ['All', ...new Set(allEvents.map(event => event.category))]
 
   // Filter events when category changes
   useEffect(() => {
     if (selectedCategory === 'All') {
-      setFilteredEvents(eventsData)
+      setFilteredEvents(allEvents)
     } else {
-      setFilteredEvents(eventsData.filter(event => event.category === selectedCategory))
+      setFilteredEvents(allEvents.filter(event => event.category === selectedCategory))
     }
-  }, [selectedCategory])
+  }, [selectedCategory, allEvents])
 
   return (
     <>
       <Header />
       <div className='w-[100%]'>
-      <CreateEvent/>
+        <CreateEvent onEventAdded={handleEventAdded} />
       </div>
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
@@ -40,7 +59,7 @@ const EventPage = () => {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 
                   ${selectedCategory === category 
-                    ? 'bg-amber-500 text-white' 
+                    ? 'bg-black text-white' 
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
               >
