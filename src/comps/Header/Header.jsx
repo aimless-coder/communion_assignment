@@ -32,7 +32,7 @@ const Header = () => {
           <div className="hidden md:flex space-x-8">
             <Link to="/" className="text-gray-600 hover:text-gray-900">Home</Link>
             <Link to="/events" className="text-gray-600 hover:text-gray-900">Events</Link>
-            <Link to="/contact" className="text-gray-600 hover:text-gray-900">About</Link>
+            <Link to="/about" className="text-gray-600 hover:text-gray-900">About</Link>
           </div>
 
           <div className="md:hidden">
@@ -59,30 +59,32 @@ const Header = () => {
           </div>
         </div>
 
-        {isMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <Link
-                to="/"
-                className="block px-3 py-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              >
-                Home
-              </Link>
-              <Link
-                to="/events"
-                className="block px-3 py-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              >
-                Events
-              </Link>
-              <Link
-                to="/contact"
-                className="block px-3 py-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              >
-                About
-              </Link>
-            </div>
+        <div 
+          className={`md:hidden transform transition-all duration-300 ease-in-out ${
+            isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full h-0'
+          }`}
+        >
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <Link
+              to="/"
+              className="block px-3 py-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
+            >
+              Home
+            </Link>
+            <Link
+              to="/events"
+              className="block px-3 py-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
+            >
+              Events
+            </Link>
+            <Link
+              to="/about"
+              className="block px-3 py-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
+            >
+              About
+            </Link>
           </div>
-        )}
+        </div>
       </div>
     </nav>
   )

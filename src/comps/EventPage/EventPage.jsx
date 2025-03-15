@@ -11,7 +11,7 @@ const EventPage = () => {
   const [allEvents, setAllEvents] = useState([])
 
   // Define all available categories
-  const allCategories = ['All', 'Technology', 'Music', 'Food', 'Sports', 'Art']
+  const allCategories = ['All', 'Technology', 'Music', 'Food', 'Sports', 'Art', 'Religious']
 
   // Load initial events
   useEffect(() => {
