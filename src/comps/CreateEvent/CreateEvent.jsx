@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 import { IoMdAdd } from "react-icons/io"
 import { addEvent, getAllEvents } from '../../events'
+import { Button } from '@/components/ui/button'
+import GooglePlacesAutocomplete from "react-google-places-autocomplete"
 
 const CreateEvent = ({ onEventAdded }) => {
   const [isFormVisible, setIsFormVisible] = useState(false)
+  const [selectedLocation, setSelectedLocation] = useState(null)
   const [formData, setFormData] = useState({
     eventTitle: '',
     location: '',
@@ -19,6 +22,14 @@ const CreateEvent = ({ onEventAdded }) => {
     setFormData(prevState => ({
       ...prevState,
       [name]: value
+    }))
+  }
+
+  const handleLocationChange = (value) => {
+    setSelectedLocation(value)
+    setFormData(prevState => ({
+      ...prevState,
+      location: value.label
     }))
   }
 
@@ -39,6 +50,7 @@ const CreateEvent = ({ onEventAdded }) => {
       description: '',
       image: ''
     })
+    setSelectedLocation(null)
     setIsFormVisible(false)
 
     // Notify parent component to update events list
@@ -50,15 +62,18 @@ const CreateEvent = ({ onEventAdded }) => {
 
   return (
     <div className="w-full max-w-6xl mx-auto p-4">
-      <button
-        onClick={() => setIsFormVisible(!isFormVisible)}
-        className="w-full md:w-64 bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors mb-4 flex items-center justify-center gap-2"
-      >
-        <IoMdAdd 
-          className={`text-xl transition-transform duration-300 ${isFormVisible ? 'rotate-45' : 'rotate-0'}`}
-        />
-        <span>{isFormVisible ? 'Close' : 'Create Event'}</span>
-      </button>
+      <div className='w-full flex justify-between items-center py-3 border-b-1 shadow-[0_2px_4px_-2px_rgba(0,0,0,0.1)]'>
+        <h2 className='text-3xl md:text-4xl font-semibold '>Host Your Event</h2>
+        <Button
+          onClick={() => setIsFormVisible(!isFormVisible)}
+          className="w-32 md:w-64 bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+        >
+          <IoMdAdd 
+            className={`text-xl transition-transform duration-300 ${isFormVisible ? 'rotate-45' : 'rotate-0'}`}
+          />
+          <span>{isFormVisible ? 'Close' : 'Create Event'}</span>
+        </Button>
+      </div>
 
       {isFormVisible && (
         <div className="mt-4 bg-white p-6 rounded-lg shadow-lg border border-gray-200 transition-all duration-300 ease-in-out">
@@ -79,14 +94,40 @@ const CreateEvent = ({ onEventAdded }) => {
             {/* Location - Half width on medium screens */}
             <div>
               <label className="block text-gray-700 text-sm font-semibold mb-2">Location</label>
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
-                required
-              />
+              <div className="w-full">
+                <GooglePlacesAutocomplete
+                  apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
+                  selectProps={{
+                    value: selectedLocation,
+                    onChange: handleLocationChange,
+                    placeholder: "Enter location",
+                    styles: {
+                      control: (provided, state) => ({
+                        ...provided,
+                        padding: '4px',
+                        borderRadius: '0.375rem',
+                        boxShadow: state.isFocused ? '0 0 0 1px black' : 'none',
+                        borderColor: state.isFocused ? 'transparent' : '#D1D5DB',
+                        '&:hover': {
+                          borderColor: '#000000'
+                        }
+                      }),
+                      input: (provided) => ({
+                        ...provided,
+                        padding: '4px'
+                      }),
+                      option: (provided, state) => ({
+                        ...provided,
+                        backgroundColor: state.isFocused ? '#f3f4f6' : 'white',
+                        color: 'black',
+                        '&:hover': {
+                          backgroundColor: '#f3f4f6'
+                        }
+                      })
+                    }
+                  }}
+                />
+              </div>
             </div>
 
             {/* Date - Half width on medium screens */}
@@ -149,7 +190,7 @@ const CreateEvent = ({ onEventAdded }) => {
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all h-32"
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all h-32 resize-none"
                 required
               ></textarea>
             </div>

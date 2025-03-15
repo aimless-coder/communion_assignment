@@ -10,6 +10,9 @@ const EventPage = () => {
   const [filteredEvents, setFilteredEvents] = useState([])
   const [allEvents, setAllEvents] = useState([])
 
+  // Define all available categories
+  const allCategories = ['All', 'Technology', 'Music', 'Food', 'Sports', 'Art']
+
   // Load initial events
   useEffect(() => {
     const events = getAllEvents()
@@ -27,9 +30,6 @@ const EventPage = () => {
     }
   }
 
-  // Get unique categories from events
-  const categories = ['All', ...new Set(allEvents.map(event => event.category))]
-
   // Filter events when category changes
   useEffect(() => {
     if (selectedCategory === 'All') {
@@ -45,7 +45,7 @@ const EventPage = () => {
       <div className='w-[100%]'>
         <CreateEvent onEventAdded={handleEventAdded} />
       </div>
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="max-w-7xl mx-auto px-4 py-5">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Upcoming Events</h1>
           <p className="text-gray-600 max-w-2xl mx-auto mb-8">
@@ -53,7 +53,7 @@ const EventPage = () => {
           </p>
 
           <div className="flex flex-wrap justify-center gap-3 mb-8">
-            {categories.map((category) => (
+            {allCategories.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}

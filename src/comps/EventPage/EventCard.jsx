@@ -4,6 +4,24 @@ import { Button } from '@/components/ui/button'
 
 const EventCard = ({ event }) => {
   const formattedDate = format(new Date(event.date), 'MMMM dd, yyyy')
+  
+  const handleAddToCalendar = () => {
+    // Format the date for Google Calendar
+    const eventDate = new Date(event.date)
+    const endDate = new Date(eventDate)
+    endDate.setHours(eventDate.getHours() + 2) // Default duration of 2 hours
+    
+    // Create Google Calendar URL
+    const googleCalendarUrl = new URL('https://calendar.google.com/calendar/render')
+    googleCalendarUrl.searchParams.append('action', 'TEMPLATE')
+    googleCalendarUrl.searchParams.append('text', event.eventTitle)
+    googleCalendarUrl.searchParams.append('details', `${event.description}\n\nLocation: ${event.location}\nSeats: ${event.seats === 'free' ? 'Free Entry' : `${event.seats} seats`}`)
+    googleCalendarUrl.searchParams.append('location', event.location)
+    googleCalendarUrl.searchParams.append('dates', `${eventDate.toISOString().replace(/-|:|\.\d+/g, '')}/${endDate.toISOString().replace(/-|:|\.\d+/g, '')}`)
+
+    // Open in new tab
+    window.open(googleCalendarUrl.toString(), '_blank')
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -15,7 +33,7 @@ const EventCard = ({ event }) => {
           className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
         />
         <div className="absolute top-0 right-0 m-4">
-          <span className="inline-block bg-black text-white text-xs px-3 py-1 rounded-full">
+          <span className="inline-block bg-white text-black text-sm px-3 py-1 rounded-full">
             {event.category}
           </span>
         </div>
@@ -50,8 +68,14 @@ const EventCard = ({ event }) => {
 
         <p className="mt-4 text-gray-600 line-clamp-2">{event.description}</p>
 
-        <Button className="mt-4 w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-duration-300">
-          Add to Calender
+        <Button 
+          onClick={handleAddToCalendar}
+          className="mt-4 w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-duration-300 flex items-center justify-center gap-2"
+        >
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          Add to Calendar
         </Button>
       </div>
     </div>
